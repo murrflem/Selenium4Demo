@@ -1,0 +1,71 @@
+# =============================
+# S4Demo Solution - .gitignore
+# =============================
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.sln.ide
+*.cache
+*.pdb
+
+# NuGet packages
+*.nupkg
+*.snupkg
+*.nuspec
+*.nuget.props
+*.nuget.targets
+packages/
+*.lock.json
+
+# Test results and coverage
+TestResult.xml
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*.testlog
+*.tmp
+*.nunit
+*.VisualState.xml
+
+# Screenshots, reports, and temp output
+Screenshots/
+ErrorScreenshots/
+PageScreenshots/
+Reports/
+*.png
+*.jpg
+
+# JetBrains Rider / ReSharper
+.idea/
+_ReSharper*/
+*.DotSettings.user
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Selenium / Drivers
+chromedriver.exe
+geckodriver.exe
+msedgedriver.exe
+
+# Logs
+*.log
+NLog.config.old
+
+# Publish and artifacts
+publish/
+artifacts/
