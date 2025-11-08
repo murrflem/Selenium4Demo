@@ -10,14 +10,12 @@ namespace S4Demo.Framework.Helpers
   {
     private readonly IWebDriver _webDriver;
     private WaitHelper _waitHelper;
-    private readonly WebDriverWait _wait;
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public SeleniumHelper(IWebDriver webDriver)
     {
       _webDriver = webDriver ?? throw new ArgumentNullException(nameof(webDriver));
       _waitHelper = new WaitHelper(webDriver);
-      _wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(60));
     }
 
     // ===================================================================
@@ -28,6 +26,7 @@ namespace S4Demo.Framework.Helpers
     {
       try
       {
+        _waitHelper.WaitUntilClickable(element);
         new JavaScriptHelper(_webDriver).HighlightElement(element);
         string currentUrl = _webDriver.Url;
         element.Click();
@@ -41,12 +40,12 @@ namespace S4Demo.Framework.Helpers
       }
     }
 
-
     public void Click(By by)
     {
       try
       {
-        var element = _webDriver.FindElement(by);
+        var element = _waitHelper.WaitUntilClickable(by);
+        _waitHelper.WaitUntilClickable(element);
         new JavaScriptHelper(_webDriver).HighlightElement(element);
         string currentUrl = _webDriver.Url;
         element.Click();
@@ -64,6 +63,7 @@ namespace S4Demo.Framework.Helpers
     {
       try
       {
+        _waitHelper.WaitUntilClickable(element);
         new JavaScriptHelper(_webDriver).HighlightElement(element);
         string currentUrl = _webDriver.Url;
         element.Submit();
@@ -81,7 +81,7 @@ namespace S4Demo.Framework.Helpers
     {
       try
       {
-        var element = _webDriver.FindElement(by);
+        var element = _waitHelper.WaitUntilClickable(by);
         new JavaScriptHelper(_webDriver).HighlightElement(element);
         string currentUrl = _webDriver.Url;
         element.Submit();
@@ -103,6 +103,7 @@ namespace S4Demo.Framework.Helpers
     {
       try
       {
+        _waitHelper.WaitForElementToBeDisplayed(element);
         new JavaScriptHelper(_webDriver).HighlightElement(element);
         ClearTextbox(element);
         element.SendKeys(textToType);
@@ -115,8 +116,16 @@ namespace S4Demo.Framework.Helpers
 
     public void ClearTextbox(IWebElement textBox)
     {
-      _waitHelper.WaitUntilVisible(textBox);
-      textBox.Clear();
+      try
+      {
+        _waitHelper.WaitForElementToBeDisplayed(textBox);
+        textBox.Clear();
+      }
+      catch (Exception e)
+      {
+        Logger.Error(e.Message + "\r\n" + e.StackTrace + "\r\n");
+      }
+
     }
 
     // ===================================================================
@@ -125,6 +134,7 @@ namespace S4Demo.Framework.Helpers
 
     public string GetTextFromElement(IWebElement element)
     {
+      _waitHelper.WaitUntilVisible(element);
       new JavaScriptHelper(_webDriver).HighlightElement(element);
       var displayedText = element.Text;
       return displayedText;
@@ -132,7 +142,7 @@ namespace S4Demo.Framework.Helpers
 
     public string GetTextFromElement(By by)
     {
-      var element = _webDriver.FindElement(by);
+      var element = _waitHelper.WaitUntilVisible(by);
       new JavaScriptHelper(_webDriver).HighlightElement(element);
       var displayedText = element.Text;
       return displayedText;
@@ -170,6 +180,7 @@ namespace S4Demo.Framework.Helpers
     {
       try
       {
+        _waitHelper.WaitUntilVisible(element);
         new JavaScriptHelper(_webDriver).HighlightElement(element);
         var selectElement = new SelectElement(element);
         selectElement.SelectByText(comboItem);
@@ -184,6 +195,7 @@ namespace S4Demo.Framework.Helpers
     {
       try
       {
+        _waitHelper.WaitUntilVisible(element);
         new JavaScriptHelper(_webDriver).HighlightElement(element);
         var selectElement = new SelectElement(element);
         selectElement.SelectByValue(comboItem);
@@ -265,17 +277,6 @@ namespace S4Demo.Framework.Helpers
       return element.Selected;
     }
 
-    public bool IsCheckboxSelected(IWebElement checkbox)
-    {
-      return checkbox.Selected;
-    }
-
-    public bool IsCheckboxSelected(By by)
-    {
-      var checkbox = _webDriver.FindElement(by);
-      return checkbox.Selected;
-    }
-
     public bool IsPageDisplayingExpectedElements(IReadOnlyList<IWebElement> expectedElements)
     {
       _waitHelper.WaitForPageToLoad();
@@ -299,13 +300,31 @@ namespace S4Demo.Framework.Helpers
       element.SendKeys(Keys.Enter);
     }
 
+    public void PressEnterKey(By by)
+    {
+      var element = _waitHelper.WaitUntilVisible(by);
+      element.SendKeys(Keys.Enter);
+    }
+
     public void PressTabKey(IWebElement element)
     {
       element.SendKeys(Keys.Tab);
     }
 
+    public void PressTabKey(By by)
+    {
+      var element = _waitHelper.WaitUntilVisible(by);
+      element.SendKeys(Keys.Tab);
+    }
+
     public void PressBackspaceKey(IWebElement element)
     {
+      element.SendKeys(Keys.Backspace);
+    }
+
+    public void PressBackspaceKey(By by)
+    {
+      var element = _waitHelper.WaitUntilVisible(by);
       element.SendKeys(Keys.Backspace);
     }
   }
