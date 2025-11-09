@@ -2,7 +2,7 @@
 {
   public static class TestSettings
   {
-    public const bool EnableScreenshots = true;
+    public static bool EnableScreenshots { get; set; } = true;
     public const bool HighlightElements = true;
     public const bool RunOnGrid = false;
     public const string TestSiteUrl = "https://www.phptravels.net/";

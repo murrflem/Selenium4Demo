@@ -1,5 +1,4 @@
 ﻿using NLog;
-using S4Demo.Framework.Helpers;
 using S4Demo.Framework.Setup;
 using S4Demo.Tests.Pages;
 using System.Net.Http;
@@ -9,12 +8,11 @@ namespace S4Demo.Tests.Tests
   public class BaseTest : FrameworkBaseTest
   {
     protected BasePage CurrentPage;
-    protected CommonHelper Common;
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public BaseTest()
     {
-      Common = new CommonHelper();
+
     }
 
     protected override void LoadInitialPage()

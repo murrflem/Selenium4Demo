@@ -8,7 +8,6 @@ namespace S4Demo.Framework.Setup
     public IWebDriver WebDriver;
     public SeleniumHelper Selenium;
     public JavaScriptHelper JavaScriptHelper;
-    public CommonHelper Common;
     public ScreenshotHelper ScreenshotHelper;
     public TestSetup Setup;
 
@@ -17,7 +16,6 @@ namespace S4Demo.Framework.Setup
       WebDriver = webdriver;
       Selenium = new SeleniumHelper(WebDriver);
       JavaScriptHelper = new JavaScriptHelper(WebDriver);
-      Common = new CommonHelper();
       ScreenshotHelper = new ScreenshotHelper(WebDriver);
       Setup = new TestSetup();
     }
