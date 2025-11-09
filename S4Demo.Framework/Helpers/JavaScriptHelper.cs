@@ -10,7 +10,6 @@ namespace S4Demo.Framework.Helpers
     private readonly IWebDriver _webDriver;
     private WaitHelper _waitHelper;
     protected SeleniumHelper Selenium;
-    protected CommonHelper Common;
     private const string HighlightInGreen = "arguments[0].style.border='3px solid lime'";
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -19,7 +18,6 @@ namespace S4Demo.Framework.Helpers
       _webDriver = webDriver;
       _waitHelper = new WaitHelper(webDriver);
       Selenium = new SeleniumHelper(webDriver);
-      Common = new CommonHelper();
     }
 
     public void ClickElement(IWebElement element)
@@ -45,15 +43,15 @@ namespace S4Demo.Framework.Helpers
       ((IJavaScriptExecutor)_webDriver).ExecuteScript("arguments[0].value ='" + text + "'", element);
     }
 
-    public void SetInnerHtml(IWebElement element, string text)
-    {
-      ((IJavaScriptExecutor)_webDriver).ExecuteScript("arguments[0].innerHTML ='" + text + "'", element);
-    }
-
     public string GetElementValue(IWebElement element)
     {
       var elementValue = ((IJavaScriptExecutor)_webDriver).ExecuteScript("arguments[0].value;", element);
       return elementValue?.ToString();
+    }
+
+    public void SetInnerHtml(IWebElement element, string text)
+    {
+      ((IJavaScriptExecutor)_webDriver).ExecuteScript("arguments[0].innerHTML ='" + text + "'", element);
     }
 
     public string GetInnerHtml(IWebElement element)
