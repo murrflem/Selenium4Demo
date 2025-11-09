@@ -15,58 +15,89 @@ namespace S4Demo.Framework.Helpers
 
     public ScreenshotHelper(IWebDriver webDriver)
     {
-      _webDriver = webDriver;
+      _webDriver = webDriver ?? throw new ArgumentNullException(nameof(webDriver));
     }
 
-    public void ScreenshotPage()
+    /// <summary>
+    /// Captures a screenshot of the current page using the page title as the file name.
+    /// </summary>
+    public string ScreenshotPage()
     {
-      var enabled = TestSettings.EnableScreenshots;
-      if (!enabled.Equals(true)) return;
-      try
-      {
-        var page = _webDriver.Title;
-        var ss = ((ITakesScreenshot)_webDriver).GetScreenshot();
-        var fName = TestSetup.PageScreenshotsFolder + "\\" + page + ".png";
-        ss.SaveAsFile(fName);
-      }
-      catch(Exception ex)
-      {
-        Logger.Error(ex.Message);
-      }
+      return ScreenshotPage(_webDriver.Title);
     }
 
-    public void ScreenshotPage(string nameOfScreenshot)
+    /// <summary>
+    /// Captures a screenshot of the current page using the specified name.
+    /// </summary>
+    public string ScreenshotPage(string screenshotName)
     {
-      var enabled = TestSettings.EnableScreenshots;
-      if (!enabled.Equals(true)) return;
+      if (!TestSettings.EnableScreenshots)
+        return string.Empty;
+
       try
       {
-        var ss = ((ITakesScreenshot)_webDriver).GetScreenshot();
-        nameOfScreenshot = TestSetup.PageScreenshotsFolder + "\\" + nameOfScreenshot + ".png";
-        ss.SaveAsFile(nameOfScreenshot);
+        var safeName = MakeSafeFileName(screenshotName);
+        var folder = TestSetup.PageScreenshotsFolder;
+        Directory.CreateDirectory(folder);
+
+        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        var filePath = Path.Combine(folder, $"{safeName}_{timestamp}.png");
+
+        var screenshot = ((ITakesScreenshot)_webDriver).GetScreenshot();
+        screenshot.SaveAsFile(filePath);
+
+        Logger.Info($"Screenshot saved: {filePath}");
+        return filePath;
       }
       catch (Exception ex)
       {
-        Logger.Error(ex.Message);
+        Logger.Error(ex, $"Failed to capture page screenshot: {screenshotName}");
+        return string.Empty;
       }
     }
 
-    public void ScreenshotElement(IWebElement element, string nameOfScreenshot)
+    /// <summary>
+    /// Captures a screenshot of a specific element.
+    /// </summary>
+    public string ScreenshotElement(IWebElement element, string screenshotName)
     {
+      if (element == null)
+        throw new ArgumentNullException(nameof(element));
+
       try
       {
         new WaitHelper(_webDriver).WaitForElementToBeDisplayed(element);
+
         var byteArray = ((ITakesScreenshot)_webDriver).GetScreenshot().AsByteArray;
-        var screenshot = new Bitmap(new MemoryStream(byteArray));
-        var croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width, element.Size.Height);
-        screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
-        nameOfScreenshot = TestSetup.PageScreenshotsFolder + "\\" + nameOfScreenshot + ".png";
-        screenshot.Save(nameOfScreenshot, ImageFormat.Png);
+        using var screenshot = new Bitmap(new MemoryStream(byteArray));
+
+        var cropArea = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width, element.Size.Height);
+        using var elementImage = screenshot.Clone(cropArea, screenshot.PixelFormat);
+
+        var safeName = MakeSafeFileName(screenshotName);
+        var folder = TestSetup.PageScreenshotsFolder;
+        Directory.CreateDirectory(folder);
+
+        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        var filePath = Path.Combine(folder, $"{safeName}_{timestamp}.png");
+
+        elementImage.Save(filePath, ImageFormat.Png);
+
+        Logger.Info($"Element screenshot saved: {filePath}");
+        return filePath;
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
-        Logger.Error(ex.StackTrace + ' ' + ex.Message);
-      }     
+        Logger.Error(ex, $"Failed to capture element screenshot: {screenshotName}");
+        return string.Empty;
+      }
+    }
+
+    private static string MakeSafeFileName(string name)
+    {
+      foreach (var c in Path.GetInvalidFileNameChars())
+        name = name.Replace(c, '_');
+      return string.IsNullOrWhiteSpace(name) ? "Screenshot" : name.Trim();
     }
   }
 }
