@@ -1,7 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using S4Demo.Framework.Setup;
-using SeleniumExtras.WaitHelpers;
 using System;
 
 namespace S4Demo.Framework.Helpers
@@ -17,8 +16,8 @@ namespace S4Demo.Framework.Helpers
       _wait = new WebDriverWait(
           new SystemClock(),
           _driver,
-          TimeSpan.FromSeconds(TestSettings.DefaultTimeoutInSeconds),
-          TimeSpan.FromMilliseconds(TestSettings.PollingIntervalMs)
+          TimeSpan.FromSeconds(ConfigManager.DefaultTimeoutInSeconds),
+          TimeSpan.FromMilliseconds(ConfigManager.PollingIntervalMs)
       );
     }
 

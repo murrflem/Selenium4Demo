@@ -31,7 +31,7 @@ namespace S4Demo.Framework.Helpers
     /// </summary>
     public string ScreenshotPage(string screenshotName)
     {
-      if (!TestSettings.EnableScreenshots)
+      if (!ConfigManager.EnableScreenshots)
         return string.Empty;
 
       try

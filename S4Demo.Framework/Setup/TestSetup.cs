@@ -16,7 +16,7 @@ namespace S4Demo.Framework.Setup
 
     public IWebDriver SetupTest()
     {
-      var runOnGrid = TestSettings.RunOnGrid;
+      var runOnGrid = ConfigManager.RunOnGrid;
       try
       {
         var browserUnderTest = GetDesiredBrowser();
@@ -48,14 +48,14 @@ namespace S4Demo.Framework.Setup
 
     private IWebDriver CreateWebDriver(string browserUnderTest, bool runOnGrid)
     {
-      var uri = "http://" + TestSettings.GridHubIp + ":" + TestSettings.GridPort + "/wd/hub/";
+      var uri = "http://" + ConfigManager.GridHubIp + ":" + ConfigManager.GridPort + "/wd/hub/";
       var gridUri = new Uri(uri);
       return new DriverFactory().GetBrowserOptions(browserUnderTest, runOnGrid, gridUri);
     }
 
     private string GetDesiredBrowser()
     {
-      return TestSettings.TestedBrowser;
+      return ConfigManager.TestedBrowser;
     }
 
     private void CreateScreenshotFolders()

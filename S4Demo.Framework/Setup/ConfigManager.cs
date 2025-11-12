@@ -22,31 +22,21 @@ namespace S4Demo.Framework.Setup
           .Build();
     }
 
-    public static bool EnableScreenshots =>
-        bool.Parse(_config["TestSettings:EnableScreenshots"]);
+    // 🌐 Environment
+    public static string TestSiteUrl => _config["Environment:TestSiteUrl"];
+    public static bool RunOnGrid => bool.Parse(_config["Environment:RunOnGrid"]);
+    public static string GridHubIp => _config["Environment:GridHubIp"];
+    public static string GridPort => _config["Environment:GridPort"];
 
-    public static bool HighlightElements =>
-        bool.Parse(_config["TestSettings:HighlightElements"]);
+    // 🧭 Browser
+    public static string TestedBrowser => _config["Browser:TestedBrowser"];
+    public static bool HighlightElements => bool.Parse(_config["Browser:HighlightElements"]);
 
-    public static bool RunOnGrid =>
-        bool.Parse(_config["TestSettings:RunOnGrid"]);
+    // ⏱️ Timeouts
+    public static int DefaultTimeoutInSeconds => int.Parse(_config["Timeouts:DefaultTimeoutInSeconds"]);
+    public static int PollingIntervalMs => int.Parse(_config["Timeouts:PollingIntervalMs"]);
 
-    public static string TestSiteUrl =>
-        _config["TestSettings:TestSiteUrl"];
-
-    public static string TestedBrowser =>
-        _config["TestSettings:TestedBrowser"];
-
-    public static string GridHubIp =>
-        _config["TestSettings:GridHubIp"];
-
-    public static string GridPort =>
-        _config["TestSettings:GridPort"];
-
-    public static int DefaultTimeoutInSeconds =>
-        int.Parse(_config["TestSettings:DefaultTimeoutInSeconds"]);
-
-    public static int PollingIntervalMs =>
-        int.Parse(_config["TestSettings:PollingIntervalMs"]);
+    // 📸 Screenshots
+    public static bool EnableScreenshots => bool.Parse(_config["Screenshots:EnableScreenshots"]);
   }
 }

@@ -17,7 +17,7 @@ namespace S4Demo.Tests.Tests
 
     protected override void LoadInitialPage()
     {
-      var testEnvironment = TestSettings.TestSiteUrl;
+      var testEnvironment = ConfigManager.TestSiteUrl;
       new TestSetup().BaseUrl = testEnvironment;
       WebDriver.Url = testEnvironment;
       CurrentPage = new BasePage(WebDriver);
