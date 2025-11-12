@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using S4Demo.Framework.Helpers;
 using S4Demo.Tests.PageObjects;
 using S4Demo.Tests.PageObjects.SearchComponent;
 using Shouldly;

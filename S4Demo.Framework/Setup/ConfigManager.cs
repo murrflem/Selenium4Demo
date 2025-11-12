@@ -22,21 +22,21 @@ namespace S4Demo.Framework.Setup
           .Build();
     }
 
-    // 🌐 Environment
+    // Environment
     public static string TestSiteUrl => _config["Environment:TestSiteUrl"];
     public static bool RunOnGrid => bool.Parse(_config["Environment:RunOnGrid"]);
     public static string GridHubIp => _config["Environment:GridHubIp"];
     public static string GridPort => _config["Environment:GridPort"];
 
-    // 🧭 Browser
+    // Browser
     public static string TestedBrowser => _config["Browser:TestedBrowser"];
     public static bool HighlightElements => bool.Parse(_config["Browser:HighlightElements"]);
 
-    // ⏱️ Timeouts
+    // Timeouts
     public static int DefaultTimeoutInSeconds => int.Parse(_config["Timeouts:DefaultTimeoutInSeconds"]);
     public static int PollingIntervalMs => int.Parse(_config["Timeouts:PollingIntervalMs"]);
 
-    // 📸 Screenshots
+    // Screenshots
     public static bool EnableScreenshots => bool.Parse(_config["Screenshots:EnableScreenshots"]);
   }
 }

@@ -1,15 +1,14 @@
-﻿using NLog;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Remote;
+using S4Demo.Framework.Helpers;
 using System;
 
 namespace S4Demo.Framework.Setup
 {
   public class DriverFactory
   {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     public IWebDriver GetBrowserOptions(string browserType, bool gridFlag, Uri gridUri)
     {
       try
@@ -25,7 +24,7 @@ namespace S4Demo.Framework.Setup
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, "Error initializing browser driver");
+        FrameworkLogger.LogError("Error initializing browser driver", ex);
         throw;
       }
     }
