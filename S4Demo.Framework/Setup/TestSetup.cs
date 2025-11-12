@@ -1,5 +1,5 @@
-﻿using NLog;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
+using S4Demo.Framework.Helpers;
 using System;
 using System.IO;
 
@@ -12,7 +12,6 @@ namespace S4Demo.Framework.Setup
     public static string ScreenshotsMainFolder = "";
     public static string ExceptionScreenshotsFolder = "";
     public static string PageScreenshotsFolder = "";
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public IWebDriver SetupTest()
     {
@@ -29,7 +28,7 @@ namespace S4Demo.Framework.Setup
       }
       catch(Exception ex)
       {
-        Logger.Error(ex.Message);
+        FrameworkLogger.LogError(ex.Message);
       }
       return null;
     }
@@ -42,7 +41,7 @@ namespace S4Demo.Framework.Setup
       }
       catch(Exception ex)
       {
-        Logger.Error(ex.Message);
+        FrameworkLogger.LogError(ex.Message);
       }
     }
 
@@ -72,7 +71,7 @@ namespace S4Demo.Framework.Setup
       }
       catch(Exception ex)
       {
-        Logger.Error(ex.Message);
+        FrameworkLogger.LogError(ex.Message);
       }
     }
 

@@ -1,6 +1,6 @@
-﻿using NLog;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OpenQA.Selenium;
+using S4Demo.Framework.Helpers;
 using System;
 
 namespace S4Demo.Framework.Setup
@@ -10,7 +10,6 @@ namespace S4Demo.Framework.Setup
     {
         private readonly TestSetup setup;
         protected IWebDriver WebDriver;
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         protected FrameworkBaseTest()
         {
@@ -20,10 +19,9 @@ namespace S4Demo.Framework.Setup
         [SetUp]
         public void SetupTest()
         {
-          Logger.Info($"TEST SETUP - {TestContext.CurrentContext.Test.Name}");
-
-          // ✅ Verify ConfigManager is reading from appsettings.json
-          Logger.Info($"Loaded Base URL from config: {ConfigManager.TestSiteUrl}");
+          FrameworkLogger.LogInfo($"TEST SETUP - {TestContext.CurrentContext.Test.Name}");
+          // Verify ConfigManager is reading from appsettings.json
+          FrameworkLogger.LogInfo($"Loaded Base URL from config: {ConfigManager.TestSiteUrl}");
           try
           {
             WebDriver = setup.SetupTest();
@@ -31,7 +29,7 @@ namespace S4Demo.Framework.Setup
           }
           catch (Exception ex)
           {
-            Logger.Error($"FAILURE INITIALIZING TEST: {ex.Message}");
+            FrameworkLogger.LogError($"FAILURE INITIALIZING TEST: {ex.Message}");
             throw; // Important: bubble up to fail the test cleanly
           }
         }
@@ -42,19 +40,18 @@ namespace S4Demo.Framework.Setup
             try
             {
                 var testName = TestContext.CurrentContext.Test.Name;
-                Logger.Info($"TEST TEARDOWN - {testName}");
-
+                FrameworkLogger.LogInfo($"TEST TEARDOWN - {testName}");
                 var testFailed = TestContext.CurrentContext.Result.Outcome.Status == NUnit.Framework.Interfaces.TestStatus.Failed;
 
                 if (testFailed && WebDriver != null)
                 {
                     ScreenshotOnError(testName);
-                    Logger.Error(TestContext.CurrentContext.Result.Message);
+                    FrameworkLogger.LogError(TestContext.CurrentContext.Result.Message);
                 }
             }
             catch (Exception ex)
             {
-                Logger.Warn($"Error during teardown: {ex.Message}");
+                FrameworkLogger.LogError($"Error during teardown: {ex.Message}");
             }
             finally
             {
@@ -73,11 +70,11 @@ namespace S4Demo.Framework.Setup
                 var screenshot = ((ITakesScreenshot)WebDriver).GetScreenshot();
                 var fName = S4Demo.Framework.Setup.TestSetup.ExceptionScreenshotsFolder + "\\" + "Error_" + testName + "_" + browser + ".png";
                 screenshot.SaveAsFile(fName);
-                Logger.Info($"Saved screenshot: {fName}");
+                FrameworkLogger.LogInfo($"Saved screenshot: {fName}");
             }
             catch (Exception ex)
             {
-                Logger.Warn($"Unable to capture screenshot: {ex.Message}");
+                FrameworkLogger.LogWarning($"Unable to capture screenshot: {ex.Message}");
             }
         }
 

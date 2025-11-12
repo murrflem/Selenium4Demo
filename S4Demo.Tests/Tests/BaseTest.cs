@@ -1,5 +1,4 @@
-﻿using NLog;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using S4Demo.Framework.Helpers;
 using S4Demo.Framework.Setup;
