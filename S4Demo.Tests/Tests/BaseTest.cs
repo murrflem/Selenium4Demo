@@ -1,6 +1,11 @@
 ﻿using NLog;
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using S4Demo.Framework.Helpers;
 using S4Demo.Framework.Setup;
 using S4Demo.Tests.Pages;
+using System;
+using System.Diagnostics;
 using System.Net.Http;
 
 namespace S4Demo.Tests.Tests
@@ -8,11 +13,46 @@ namespace S4Demo.Tests.Tests
   public class BaseTest : FrameworkBaseTest
   {
     protected BasePage CurrentPage;
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private Stopwatch _testStopwatch;
 
-    public BaseTest()
+    [SetUp]
+    public void BaseSetUp()
     {
+      _testStopwatch = Stopwatch.StartNew();
 
+      var testName = TestContext.CurrentContext.Test.Name;
+      var browser = WebDriver?.GetType().Name ?? "Unknown Browser";
+      var environment = ConfigManager.TestSiteUrl ?? "Unknown";
+
+      FrameworkLogger.LogTestStart(testName, browser, environment);
+    }
+
+    [TearDown]
+    public void BaseTearDown()
+    {
+      _testStopwatch.Stop();
+
+      var result = TestContext.CurrentContext.Result.Outcome.Status;
+      var testName = TestContext.CurrentContext.Test.Name;
+      var duration = _testStopwatch.Elapsed;
+
+      switch (result)
+      {
+        case TestStatus.Passed:
+          FrameworkLogger.LogTestPass(testName, duration);
+          break;
+
+        case TestStatus.Failed:
+          var message = TestContext.CurrentContext.Result.Message;
+          var stackTrace = TestContext.CurrentContext.Result.StackTrace;
+          var ex = new Exception(message + Environment.NewLine + stackTrace);
+          FrameworkLogger.LogTestFail(testName, ex, duration);
+          break;
+
+        default:
+          FrameworkLogger.LogWarning($"[TEST {result}] {testName} finished with status {result}");
+          break;
+      }
     }
 
     protected override void LoadInitialPage()
@@ -34,7 +74,7 @@ namespace S4Demo.Tests.Tests
       }
       catch (HttpRequestException ex)
       {
-        Logger.Fatal(ex, $"EXCEPTION LOADING THE INITIAL PAGE: {url}");
+        FrameworkLogger.LogError($"EXCEPTION LOADING INITIAL PAGE: {url}", ex);
       }
     }
   }
