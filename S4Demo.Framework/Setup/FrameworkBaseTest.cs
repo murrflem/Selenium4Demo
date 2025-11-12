@@ -18,19 +18,22 @@ namespace S4Demo.Framework.Setup
         }
 
         [SetUp]
-        public void TestSetup()
+        public void SetupTest()
         {
-            Logger.Info($"TEST SETUP - {TestContext.CurrentContext.Test.Name}");
-            try
-            {
-                WebDriver = setup.SetupTest();
-                LoadInitialPage();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"FAILURE INITIALIZING TEST: {ex.Message}");
-                throw; // Important: bubble up to fail the test cleanly
-            }
+          Logger.Info($"TEST SETUP - {TestContext.CurrentContext.Test.Name}");
+
+          // ✅ Verify ConfigManager is reading from appsettings.json
+          Logger.Info($"Loaded Base URL from config: {ConfigManager.TestSiteUrl}");
+          try
+          {
+            WebDriver = setup.SetupTest();
+            LoadInitialPage();
+          }
+          catch (Exception ex)
+          {
+            Logger.Error($"FAILURE INITIALIZING TEST: {ex.Message}");
+            throw; // Important: bubble up to fail the test cleanly
+          }
         }
 
         [TearDown]

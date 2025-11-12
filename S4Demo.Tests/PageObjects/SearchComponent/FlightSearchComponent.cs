@@ -6,7 +6,6 @@ namespace S4Demo.Tests.PageObjects.SearchComponent
   public class FlightSearchComponent : BaseSearchComponent
   {
     private WaitHelper _waitHelper;
-    private ScreenshotHelper _screenshotHelper;
     public IWebElement FlightsLink => WebDriver.FindElement(By.CssSelector("#tab > li:nth-child(1) > button > span"));
     public IWebElement FromTextbox => WebDriver.FindElement(By.Name("from"));
     public IWebElement ToTextbox => WebDriver.FindElement(By.Name("to"));
@@ -24,13 +23,10 @@ namespace S4Demo.Tests.PageObjects.SearchComponent
     public FlightSearchComponent(IWebDriver driver) : base(driver)
     {
       _waitHelper = new WaitHelper(driver);
-      _screenshotHelper = new ScreenshotHelper(driver);
     }
 
     public void SearchForFlights(string departureCode, string arrivalCode)
     {
-      _screenshotHelper.ScreenshotPage();
-      _screenshotHelper.ScreenshotPage("landing");
       var x = CommonHelper.RandomString(14);
       Selenium.Click(FlightsLink);
       EnterDepartureAiport(departureCode);

@@ -343,7 +343,7 @@ namespace S4Demo.Framework.Helpers
     // ===================================================================
     private void ExecuteHighlight(IWebElement element)
     {
-      if (!TestSettings.HighlightElements || element == null) return;
+      if (!ConfigManager.HighlightElements || element == null) return;
 
       try
       {

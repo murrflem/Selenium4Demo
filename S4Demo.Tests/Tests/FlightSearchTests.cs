@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using S4Demo.Framework.Helpers;
 using S4Demo.Tests.PageObjects;
 using S4Demo.Tests.PageObjects.SearchComponent;
 using Shouldly;
@@ -11,6 +12,7 @@ namespace S4Demo.Tests.Tests
     private HomePage _homePage;
     private FlightSearchComponent _flightSearchComponent;
     private SearchResultsPage _searchResultsPage;
+    private ScreenshotHelper _screenshotHelper;
 
     [SetUp]
     public void Init()
@@ -18,6 +20,7 @@ namespace S4Demo.Tests.Tests
       _homePage = new HomePage(WebDriver);
       _flightSearchComponent = new FlightSearchComponent(WebDriver);
       _searchResultsPage = new SearchResultsPage(WebDriver);
+      _screenshotHelper = new ScreenshotHelper(WebDriver);
     }
 
     [Test]
@@ -29,6 +32,7 @@ namespace S4Demo.Tests.Tests
       _searchResultsPage.SearchesDropdown.Displayed.ShouldBeTrue();
       _searchResultsPage.ClearSearches();
       _homePage.NavigateToPage();
+      _screenshotHelper.ScreenshotPage();
     }
   }
 }
