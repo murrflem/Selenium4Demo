@@ -1,5 +1,4 @@
-﻿using NLog;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -11,7 +10,6 @@ namespace S4Demo.Framework.Helpers
   public class ScreenshotHelper
   {
     private readonly IWebDriver _webDriver;
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public ScreenshotHelper(IWebDriver webDriver)
     {
@@ -32,7 +30,10 @@ namespace S4Demo.Framework.Helpers
     public string ScreenshotPage(string screenshotName)
     {
       if (!ConfigManager.EnableScreenshots)
+      {
+        FrameworkLogger.LogInfo("Screenshots are disabled in configuration.");
         return string.Empty;
+      }
 
       try
       {
@@ -46,12 +47,12 @@ namespace S4Demo.Framework.Helpers
         var screenshot = ((ITakesScreenshot)_webDriver).GetScreenshot();
         screenshot.SaveAsFile(filePath);
 
-        Logger.Info($"Screenshot saved: {filePath}");
+        FrameworkLogger.LogInfo($"Screenshot saved: {filePath}");
         return filePath;
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, $"Failed to capture page screenshot: {screenshotName}");
+        FrameworkLogger.LogError($"Failed to capture page screenshot: {screenshotName}", ex);
         return string.Empty;
       }
     }
@@ -83,12 +84,12 @@ namespace S4Demo.Framework.Helpers
 
         elementImage.Save(filePath, ImageFormat.Png);
 
-        Logger.Info($"Element screenshot saved: {filePath}");
+        FrameworkLogger.LogInfo($"Element screenshot saved: {filePath}");
         return filePath;
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, $"Failed to capture element screenshot: {screenshotName}");
+        FrameworkLogger.LogError($"Failed to capture element screenshot: {screenshotName}", ex);
         return string.Empty;
       }
     }

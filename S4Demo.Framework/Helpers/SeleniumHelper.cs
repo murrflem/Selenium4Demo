@@ -1,5 +1,4 @@
-﻿using NLog;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -9,8 +8,7 @@ namespace S4Demo.Framework.Helpers
   public class SeleniumHelper
   {
     private readonly IWebDriver _webDriver;
-    private WaitHelper _waitHelper;
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private readonly WaitHelper _waitHelper;
 
     public SeleniumHelper(IWebDriver webDriver)
     {
@@ -67,7 +65,7 @@ namespace S4Demo.Framework.Helpers
     {
       if (element == null)
       {
-        Logger.Warn($"{actionName} skipped — target element was null.");
+        FrameworkLogger.LogWarning($"{actionName} skipped — target element was null.");
         return;
       }
 
@@ -85,23 +83,23 @@ namespace S4Demo.Framework.Helpers
         if (_webDriver.Url != currentUrl)
           _waitHelper.WaitForAjaxAndPageLoad();
 
-        Logger.Debug($"{actionName} action performed successfully.");
+        FrameworkLogger.LogInfo($"{actionName} action performed successfully.");
       }
       catch (StaleElementReferenceException ex)
       {
-        Logger.Warn($"{actionName} failed — element became stale. {ex.Message}");
+        FrameworkLogger.LogWarning($"{actionName} failed — element became stale. {ex.Message}");
       }
       catch (NoSuchElementException ex)
       {
-        Logger.Warn($"{actionName} failed — element not found. {ex.Message}");
+        FrameworkLogger.LogWarning($"{actionName} failed — element not found. {ex.Message}");
       }
       catch (WebDriverException ex)
       {
-        Logger.Error(ex, $"{actionName} failed due to WebDriver issue.");
+        FrameworkLogger.LogError($"{actionName} failed due to WebDriver issue.", ex);
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, $"Unexpected error during {actionName} action.");
+        FrameworkLogger.LogError($"Unexpected error during {actionName} action.", ex); 
       }
     }
 
@@ -118,7 +116,7 @@ namespace S4Demo.Framework.Helpers
     {
       if (element == null)
       {
-        Logger.Warn("EnterText skipped — target element was null.");
+        FrameworkLogger.LogWarning("EnterText skipped — target element was null.");
         return;
       }
 
@@ -130,23 +128,23 @@ namespace S4Demo.Framework.Helpers
         ClearTextbox(element);
         element.SendKeys(textToType ?? string.Empty);
 
-        Logger.Debug($"Text '{textToType}' entered successfully.");
+        FrameworkLogger.LogInfo($"Text '{textToType}' entered successfully.");
       }
       catch (StaleElementReferenceException ex)
       {
-        Logger.Warn($"Element became stale during EnterText. {ex.Message}");
+        FrameworkLogger.LogWarning($"Element became stale during EnterText. {ex.Message}");
       }
       catch (NoSuchElementException ex)
       {
-        Logger.Warn($"Element not found during EnterText. {ex.Message}");
+        FrameworkLogger.LogWarning($"Element not found during EnterText. {ex.Message}");
       }
       catch (WebDriverException ex)
       {
-        Logger.Error(ex, "WebDriver error while entering text.");
+        FrameworkLogger.LogError("WebDriver error while entering text.", ex);
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, "Unexpected error while entering text.");
+        FrameworkLogger.LogError("Unexpected error while entering text.", ex);
       }
     }
 
@@ -158,7 +156,7 @@ namespace S4Demo.Framework.Helpers
     {
       if (textBox == null)
       {
-        Logger.Warn("ClearTextbox skipped — target element was null.");
+        FrameworkLogger.LogWarning("ClearTextbox skipped — target element was null.");
         return;
       }
 
@@ -167,23 +165,23 @@ namespace S4Demo.Framework.Helpers
         _waitHelper.WaitUntilVisible(textBox);
         new JavaScriptHelper(_webDriver).HighlightElement(textBox);
         textBox.Clear();
-        Logger.Debug("Textbox cleared successfully.");
+        FrameworkLogger.LogInfo("Textbox cleared successfully.");
       }
       catch (StaleElementReferenceException ex)
       {
-        Logger.Warn($"Textbox became stale during ClearTextbox. {ex.Message}");
+        FrameworkLogger.LogWarning($"Textbox became stale during ClearTextbox. {ex.Message}");
       }
       catch (NoSuchElementException ex)
       {
-        Logger.Warn($"Textbox not found during ClearTextbox. {ex.Message}");
+        FrameworkLogger.LogWarning($"Textbox not found during ClearTextbox. {ex.Message}");
       }
       catch (WebDriverException ex)
       {
-        Logger.Error(ex, "WebDriver error while clearing textbox.");
+        FrameworkLogger.LogError("WebDriver error while clearing textbox.", ex);
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, "Unexpected error while clearing textbox.");
+        FrameworkLogger.LogError("Unexpected error while clearing textbox.", ex);
       }
     }
 
@@ -215,17 +213,17 @@ namespace S4Demo.Framework.Helpers
       }
       catch (StaleElementReferenceException)
       {
-        Logger.Warn("Element became stale while trying to retrieve text.");
+        FrameworkLogger.LogWarning("Element became stale while trying to retrieve text.");
         return string.Empty;
       }
       catch (NoSuchElementException)
       {
-        Logger.Warn("Element not found while trying to retrieve text.");
+        FrameworkLogger.LogWarning("Element not found while trying to retrieve text.");
         return string.Empty;
       }
       catch (Exception e)
       {
-        Logger.Error($"{e.Message}\r\n{e.StackTrace}");
+        FrameworkLogger.LogError("Error while checking element state.", e);
         return string.Empty;
       }
     }
@@ -281,15 +279,15 @@ namespace S4Demo.Framework.Helpers
       }
       catch (NoSuchElementException)
       {
-        Logger.Warn($"Option with text '{comboItem}' not found in dropdown.");
+        FrameworkLogger.LogWarning($"Option with text '{comboItem}' not found in dropdown.");
       }
       catch (StaleElementReferenceException)
       {
-        Logger.Warn("Dropdown element became stale while selecting by text.");
+        FrameworkLogger.LogWarning("Dropdown element became stale while selecting by text.");
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, $"Unexpected error selecting dropdown option by text: '{comboItem}'.");
+        FrameworkLogger.LogError($"Unexpected error selecting dropdown option by text: '{comboItem}'.", ex);
       }
     }
 
@@ -313,15 +311,15 @@ namespace S4Demo.Framework.Helpers
       }
       catch (NoSuchElementException)
       {
-        Logger.Warn($"Option with value '{comboItem}' not found in dropdown.");
+        FrameworkLogger.LogWarning($"Option with value '{comboItem}' not found in dropdown.");
       }
       catch (StaleElementReferenceException)
       {
-        Logger.Warn("Dropdown element became stale while selecting by value.");
+        FrameworkLogger.LogWarning("Dropdown element became stale while selecting by value.");
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, $"Unexpected error selecting dropdown option by value: '{comboItem}'.");
+        FrameworkLogger.LogError($"Unexpected error selecting dropdown option by value: '{comboItem}'.", ex);
       }
     }
 
@@ -343,7 +341,7 @@ namespace S4Demo.Framework.Helpers
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, "Error retrieving number of dropdown options.");
+        FrameworkLogger.LogError("Error retrieving number of dropdown options.", ex);
         return 0;
       }
     }
@@ -368,7 +366,7 @@ namespace S4Demo.Framework.Helpers
       }
       catch (Exception ex)
       {
-        Logger.Error(ex, "Error retrieving currently selected dropdown value.");
+        FrameworkLogger.LogError("Error retrieving currently selected dropdown value.", ex);
         return string.Empty;
       }
     }
@@ -451,22 +449,22 @@ namespace S4Demo.Framework.Helpers
       }
       catch (StaleElementReferenceException)
       {
-        Logger.Warn("Element became stale while checking for text presence.");
+        FrameworkLogger.LogWarning("Element became stale while checking for text presence.");
         return false;
       }
       catch (NoSuchElementException)
       {
-        Logger.Warn("Element not found while checking for text presence.");
+        FrameworkLogger.LogWarning("Element not found while checking for text presence.");
         return false;
       }
       catch (WebDriverTimeoutException)
       {
-        Logger.Warn($"Timeout waiting for text '{expectedText}' to appear.");
+        FrameworkLogger.LogWarning($"Timeout waiting for text '{expectedText}' to appear.");
         return false;
       }
       catch (Exception e)
       {
-        Logger.Error($"{e.Message}\r\n{e.StackTrace}");
+        FrameworkLogger.LogError("Error while checking element state.", e);
         return false;
       }
     }
@@ -504,22 +502,22 @@ namespace S4Demo.Framework.Helpers
       }
       catch (StaleElementReferenceException)
       {
-        Logger.Warn("Element became stale while checking visibility.");
+        FrameworkLogger.LogWarning("Element became stale while checking visibility.");
         return false;
       }
       catch (NoSuchElementException)
       {
-        Logger.Warn("Element not found while checking visibility.");
+        FrameworkLogger.LogWarning("Element not found while checking visibility.");
         return false;
       }
       catch (WebDriverTimeoutException)
       {
-        Logger.Warn("Timed out waiting for element to become visible.");
+        FrameworkLogger.LogWarning("Timed out waiting for element to become visible.");
         return false;
       }
       catch (Exception e)
       {
-        Logger.Error($"{e.Message}\r\n{e.StackTrace}");
+        FrameworkLogger.LogError("Error while checking element state.", e);
         return false;
       }
     }
@@ -550,22 +548,22 @@ namespace S4Demo.Framework.Helpers
       }
       catch (StaleElementReferenceException)
       {
-        Logger.Warn("Element became stale while checking if enabled.");
+        FrameworkLogger.LogWarning("Element became stale while checking if enabled.");
         return false;
       }
       catch (NoSuchElementException)
       {
-        Logger.Warn("Element not found while checking if enabled.");
+        FrameworkLogger.LogWarning("Element not found while checking if enabled.");
         return false;
       }
       catch (WebDriverTimeoutException)
       {
-        Logger.Warn("Timed out waiting for element to become enabled.");
+        FrameworkLogger.LogWarning("Timed out waiting for element to become enabled.");
         return false;
       }
       catch (Exception e)
       {
-        Logger.Error($"{e.Message}\r\n{e.StackTrace}");
+        FrameworkLogger.LogError("Error while checking element state.", e);
         return false;
       }
     }
@@ -596,22 +594,22 @@ namespace S4Demo.Framework.Helpers
       }
       catch (StaleElementReferenceException)
       {
-        Logger.Warn("Element became stale while checking if selected.");
+        FrameworkLogger.LogWarning("Element became stale while checking if selected.");
         return false;
       }
       catch (NoSuchElementException)
       {
-        Logger.Warn("Element not found while checking if selected.");
+        FrameworkLogger.LogWarning("Element not found while checking if selected.");
         return false;
       }
       catch (WebDriverTimeoutException)
       {
-        Logger.Warn("Timed out waiting for element to be available for selection check.");
+        FrameworkLogger.LogWarning("Timed out waiting for element to be available for selection check.");
         return false;
       }
       catch (Exception e)
       {
-        Logger.Error($"{e.Message}\r\n{e.StackTrace}");
+        FrameworkLogger.LogError("Error while checking element state.", e);
         return false;
       }
     }
@@ -624,7 +622,7 @@ namespace S4Demo.Framework.Helpers
     {
       if (expectedElements == null || expectedElements.Count == 0)
       {
-        Logger.Warn("No expected elements were provided for page validation.");
+        FrameworkLogger.LogWarning("No expected elements were provided for page validation.");
         return false;
       }
 
@@ -637,7 +635,7 @@ namespace S4Demo.Framework.Helpers
         {
           if (!IsElementVisible(element))
           {
-            Logger.Warn("One or more expected elements were not visible on the page.");
+            FrameworkLogger.LogWarning("One or more expected elements were not visible on the page.");
             return false;
           }
         }
@@ -646,7 +644,7 @@ namespace S4Demo.Framework.Helpers
       }
       catch (Exception e)
       {
-        Logger.Error($"Error while validating expected elements: {e.Message}\r\n{e.StackTrace}");
+        FrameworkLogger.LogError($"Error while validating expected elements: {e.Message}\r\n{e.StackTrace}");
         return false;
       }
     }
