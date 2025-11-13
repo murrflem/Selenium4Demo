@@ -38,5 +38,17 @@ namespace S4Demo.Framework.Setup
 
     // Screenshots
     public static bool EnableScreenshots => bool.Parse(_config["Screenshots:EnableScreenshots"]);
+
+    // Framework Logging
+    public static string LoggingMode => _config["FrameworkLogging:Mode"] ?? "AllTests";
+    public static int MaxLogsPerTest
+    {
+      get
+      {
+        if (int.TryParse(_config["FrameworkLogging:MaxLogsPerTest"], out int value))
+          return value;
+        return 5; // default fallback
+      }
+    }
   }
 }

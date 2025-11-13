@@ -17,6 +17,12 @@ namespace S4Demo.Tests.Tests
     [SetUp]
     public void BaseSetUp()
     {
+      // 🧹 Run per-test log cleanup if in PerTest mode
+      if (ConfigManager.LoggingMode.Equals("PerTest", StringComparison.OrdinalIgnoreCase))
+      {
+        FrameworkLogger.RunLogCleanup();
+      }
+
       _testStopwatch = Stopwatch.StartNew();
 
       var testName = TestContext.CurrentContext.Test.Name;
@@ -26,33 +32,33 @@ namespace S4Demo.Tests.Tests
       FrameworkLogger.LogTestStart(testName, browser, environment);
     }
 
-    [TearDown]
-    public void BaseTearDown()
+  [TearDown]
+  public void BaseTearDown()
+  {
+    _testStopwatch.Stop();
+
+    var result = TestContext.CurrentContext.Result.Outcome.Status;
+    var testName = TestContext.CurrentContext.Test.Name;
+    var duration = _testStopwatch.Elapsed;
+
+    switch (result)
     {
-      _testStopwatch.Stop();
+      case TestStatus.Passed:
+         FrameworkLogger.LogTestPass(testName, duration);
+        break;
 
-      var result = TestContext.CurrentContext.Result.Outcome.Status;
-      var testName = TestContext.CurrentContext.Test.Name;
-      var duration = _testStopwatch.Elapsed;
+      case TestStatus.Failed:
+        var message = TestContext.CurrentContext.Result.Message;
+        var stackTrace = TestContext.CurrentContext.Result.StackTrace;
+        var ex = new Exception(message + Environment.NewLine + stackTrace);
+        FrameworkLogger.LogTestFail(testName, ex, duration);
+        break;
 
-      switch (result)
-      {
-        case TestStatus.Passed:
-          FrameworkLogger.LogTestPass(testName, duration);
-          break;
-
-        case TestStatus.Failed:
-          var message = TestContext.CurrentContext.Result.Message;
-          var stackTrace = TestContext.CurrentContext.Result.StackTrace;
-          var ex = new Exception(message + Environment.NewLine + stackTrace);
-          FrameworkLogger.LogTestFail(testName, ex, duration);
-          break;
-
-        default:
-          FrameworkLogger.LogWarning($"[TEST {result}] {testName} finished with status {result}");
-          break;
-      }
+      default:
+        FrameworkLogger.LogWarning($"[TEST {result}] {testName} finished with status {result}");
+        break;
     }
+  }
 
     protected override void LoadInitialPage()
     {
