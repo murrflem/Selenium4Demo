@@ -1,7 +1,11 @@
 ﻿using NUnit.Framework;
+using S4Demo.Framework.Helpers;
+using S4Demo.Framework.Setup;
 using S4Demo.Tests.PageObjects;
 using S4Demo.Tests.PageObjects.SearchComponent;
 using Shouldly;
+using System;
+using System.Net;
 
 namespace S4Demo.Tests.Tests
 {
@@ -29,6 +33,13 @@ namespace S4Demo.Tests.Tests
       _searchResultsPage.SearchesDropdown.Displayed.ShouldBeTrue();
       _searchResultsPage.ClearSearches();
       _homePage.NavigateToPage();
+
+      // Check page status code response time
+      var statusResult = HttpHelper.CheckUrlStatusAsync(WebDriver.Url).GetAwaiter().GetResult();
+      Console.WriteLine($"Status: {statusResult.StatusCode}, Time: {statusResult.ResponseTimeMs} ms");
+      var responseTime = statusResult.ResponseTimeMs;
+      statusResult.StatusCode.ShouldBe(HttpStatusCode.OK);
+      statusResult.ResponseTimeMs.ShouldBeLessThanOrEqualTo(ConfigManager.MaxExpectedResponseTimeMs);
     }
   }
 }
