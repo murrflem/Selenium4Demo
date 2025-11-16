@@ -72,5 +72,26 @@ namespace S4Demo.Framework.Setup
         return 2000; // fallback default
       }
     }
+
+    // Retry
+    public static int HttpRetryCount
+    {
+      get
+      {
+        if (int.TryParse(_config["HttpSettings:RetryCount"], out int value))
+          return value;
+        return 0;
+      }
+    }
+
+    public static int HttpRetryDelayMs
+    {
+      get
+      {
+        if (int.TryParse(_config["HttpSettings:RetryDelayMs"], out int value))
+          return value;
+        return 0;
+      }
+    }
   }
 }

@@ -23,7 +23,7 @@ namespace S4Demo.Framework.Helpers
     /// Sends an HTTP GET request to the specified URL and returns the status code and response time.
     /// Includes structured logging for start and finish events.
     /// </summary>
-    public static async Task<HttpCheckResult> CheckUrlStatusAsync(string url)
+    public static async Task<HttpCheckResult> CheckUrlStatus(string url)
     {
       if (string.IsNullOrWhiteSpace(url))
         throw new ArgumentException("URL cannot be null or empty.", nameof(url));
@@ -33,51 +33,80 @@ namespace S4Demo.Framework.Helpers
       var stopwatch = new Stopwatch();
       var result = new HttpCheckResult();
 
-      try
-      {
-        stopwatch.Start();
+      stopwatch.Start();
 
-        using (var response = await _httpClient.GetAsync(url))
+      int attempts = ConfigManager.HttpRetryCount + 1;   // e.g., RetryCount = 2 => 3 total attempts
+      int delay = ConfigManager.HttpRetryDelayMs;
+
+      for (int attempt = 1; attempt <= attempts; attempt++)
+      {
+        try
+        {
+          using (var response = await _httpClient.GetAsync(url))
+          {
+            stopwatch.Stop();
+            result.StatusCode = response.StatusCode;
+            result.ResponseTimeMs = stopwatch.ElapsedMilliseconds;
+
+            FrameworkLogger.LogInfo(
+              $"HTTP check completed for {url} | Status: {(int)result.StatusCode} {result.StatusCode}, " +
+              $"Response time: {result.ResponseTimeMs} ms (Attempt {attempt}/{attempts})");
+
+            FrameworkLogger.LogStep($"Finished HTTP check for: {url}");
+            return result; // success → exit method immediately
+          }
+        }
+        catch (HttpRequestException ex) when (attempt < attempts)
         {
           stopwatch.Stop();
-          result.StatusCode = response.StatusCode;
-          result.ResponseTimeMs = stopwatch.ElapsedMilliseconds;
 
-          FrameworkLogger.LogInfo(
-            $"HTTP check completed for {url} | Status: {(int)result.StatusCode} {result.StatusCode}, " +
-            $"Response time: {result.ResponseTimeMs} ms");
+          FrameworkLogger.LogWarning(
+            $"HTTP attempt {attempt} failed for {url}. Retrying in {delay} ms... | Error: {ex.Message}");
+
+          await Task.Delay(delay);
+          stopwatch.Restart();
+        }
+        catch (TaskCanceledException) when (attempt < attempts)
+        {
+          stopwatch.Stop();
+
+          FrameworkLogger.LogWarning(
+            $"HTTP attempt {attempt} timed out for {url}. Retrying in {delay} ms...");
+
+          await Task.Delay(delay);
+          stopwatch.Restart();
+        }
+        catch (Exception) when (attempt < attempts)
+        {
+          stopwatch.Stop();
+
+          FrameworkLogger.LogWarning(
+            $"HTTP attempt {attempt} failed for {url} due to an unexpected error. Retrying in {delay} ms...");
+
+          await Task.Delay(delay);
+          stopwatch.Restart();
         }
       }
-      catch (HttpRequestException ex)
-      {
-        stopwatch.Stop();
-        result.StatusCode = HttpStatusCode.ServiceUnavailable;
-        result.ResponseTimeMs = stopwatch.ElapsedMilliseconds;
 
-        FrameworkLogger.LogError($"HTTP check failed for {url}", ex);
-      }
-      catch (TaskCanceledException)
-      {
-        stopwatch.Stop();
-        result.StatusCode = HttpStatusCode.RequestTimeout;
-        result.ResponseTimeMs = stopwatch.ElapsedMilliseconds;
+      // If we reach here, all attempts failed
+      stopwatch.Stop();
+      result.StatusCode = HttpStatusCode.RequestTimeout;
+      result.ResponseTimeMs = stopwatch.ElapsedMilliseconds;
 
-        FrameworkLogger.LogWarning($"HTTP check timed out for {url}");
-      }
-
+      FrameworkLogger.LogError($"HTTP check failed for {url} after {attempts} attempts.");
       FrameworkLogger.LogStep($"Finished HTTP check for: {url}");
+
       return result;
     }
 
     /// <summary>
     /// Synchronous wrapper for compatibility with non-async test methods.
     /// </summary>
-    public static HttpCheckResult CheckUrlStatus(string url)
+    public static HttpCheckResult CheckUrlStatusNonAsync(string url)
     {
-      return CheckUrlStatusAsync(url).GetAwaiter().GetResult();
+      return CheckUrlStatus(url).GetAwaiter().GetResult();
     }
   }
-
   /// <summary>
   /// Represents the result of an HTTP status check.
   /// </summary>
