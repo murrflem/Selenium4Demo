@@ -255,6 +255,12 @@ namespace S4Demo.Framework.Helpers
       return list;
     }
 
+    public IEnumerable<IWebElement> GetAllPageImages()
+    {
+      var list = _webDriver.FindElements(By.TagName("img"));
+      return list;
+    }
+
     #endregion
 
     #region select elements / drop-downs

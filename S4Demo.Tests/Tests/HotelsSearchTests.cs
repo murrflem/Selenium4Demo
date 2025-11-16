@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using S4Demo.Tests.PageObjects;
+using S4Demo.Tests.PageObjects.SearchComponent;
 using Shouldly;
 using System.Collections.Generic;
 
@@ -16,6 +17,14 @@ namespace S4Demo.Tests.Tests
     {
       _hotelSearchComponent = new HotelSearchComponent(WebDriver);
       _searchResultsPage = new SearchResultsPage(WebDriver);
+    }
+
+
+    [Test]
+    [Ignore("Enable When Needed")]
+    public void CheckForBrokenImages()
+    {
+      _hotelSearchComponent.VerifyPageImages(); // Check all images on the current page
     }
 
     [Test]
