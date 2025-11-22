@@ -73,6 +73,16 @@ namespace S4Demo.Framework.Setup
       }
     }
 
+    public static bool HttpFilterByDomain
+    {
+      get
+      {
+        if (bool.TryParse(_config["HttpSettings:FilterByDomain"], out bool value))
+          return value;
+        return true; // fallback default
+      }
+    }
+
     // Retry
     public static int HttpRetryCount
     {

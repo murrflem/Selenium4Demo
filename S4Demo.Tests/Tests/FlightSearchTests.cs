@@ -25,7 +25,7 @@ namespace S4Demo.Tests.Tests
     }
 
     [Test]
-    [Ignore("Enable When Needed")]
+    //[Ignore("Enable When Needed")]
     public void CheckForBrokenLinks()
     {
       _flightSearchComponent.VerifyPageLinks(); // Check all links on the current page

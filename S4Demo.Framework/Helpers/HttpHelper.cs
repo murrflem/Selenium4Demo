@@ -23,6 +23,7 @@ namespace S4Demo.Framework.Helpers
     /// Sends an HTTP GET request to the specified URL and returns the status code and response time.
     /// Includes structured logging for start and finish events.
     /// </summary>
+    /// 
     public static async Task<HttpCheckResult> CheckUrlStatus(string url)
     {
       if (string.IsNullOrWhiteSpace(url))
@@ -32,11 +33,18 @@ namespace S4Demo.Framework.Helpers
 
       var stopwatch = new Stopwatch();
       var result = new HttpCheckResult();
-
       stopwatch.Start();
 
       int attempts = ConfigManager.HttpRetryCount + 1;   // e.g., RetryCount = 2 => 3 total attempts
       int delay = ConfigManager.HttpRetryDelayMs;
+
+      async Task HandleRetry(string message)
+      {
+        stopwatch.Stop();
+        FrameworkLogger.LogWarning(message);
+        await Task.Delay(delay);
+        stopwatch.Restart();
+      }
 
       for (int attempt = 1; attempt <= attempts; attempt++)
       {
@@ -49,8 +57,8 @@ namespace S4Demo.Framework.Helpers
             result.ResponseTimeMs = stopwatch.ElapsedMilliseconds;
 
             FrameworkLogger.LogInfo(
-              $"HTTP check completed for {url} | Status: {(int)result.StatusCode} {result.StatusCode}, " +
-              $"Response time: {result.ResponseTimeMs} ms (Attempt {attempt}/{attempts})");
+                $"HTTP check completed for {url} | Status: {(int)result.StatusCode} {result.StatusCode}, " +
+                $"Response time: {result.ResponseTimeMs} ms (Attempt {attempt}/{attempts})");
 
             FrameworkLogger.LogStep($"Finished HTTP check for: {url}");
             return result; // success → exit method immediately
@@ -58,37 +66,19 @@ namespace S4Demo.Framework.Helpers
         }
         catch (HttpRequestException ex) when (attempt < attempts)
         {
-          stopwatch.Stop();
-
-          FrameworkLogger.LogWarning(
-            $"HTTP attempt {attempt} failed for {url}. Retrying in {delay} ms... | Error: {ex.Message}");
-
-          await Task.Delay(delay);
-          stopwatch.Restart();
+          await HandleRetry($"HTTP attempt {attempt} failed for {url}. Retrying in {delay} ms... | Error: {ex.Message}");
         }
         catch (TaskCanceledException) when (attempt < attempts)
         {
-          stopwatch.Stop();
-
-          FrameworkLogger.LogWarning(
-            $"HTTP attempt {attempt} timed out for {url}. Retrying in {delay} ms...");
-
-          await Task.Delay(delay);
-          stopwatch.Restart();
+          await HandleRetry($"HTTP attempt {attempt} timed out for {url}. Retrying in {delay} ms...");
         }
         catch (Exception) when (attempt < attempts)
         {
-          stopwatch.Stop();
-
-          FrameworkLogger.LogWarning(
-            $"HTTP attempt {attempt} failed for {url} due to an unexpected error. Retrying in {delay} ms...");
-
-          await Task.Delay(delay);
-          stopwatch.Restart();
+          await HandleRetry($"HTTP attempt {attempt} failed for {url} due to an unexpected error. Retrying in {delay} ms...");
         }
       }
 
-      // If we reach here, all attempts failed
+      // All attempts failed
       stopwatch.Stop();
       result.StatusCode = HttpStatusCode.RequestTimeout;
       result.ResponseTimeMs = stopwatch.ElapsedMilliseconds;
@@ -102,11 +92,12 @@ namespace S4Demo.Framework.Helpers
     /// <summary>
     /// Synchronous wrapper for compatibility with non-async test methods.
     /// </summary>
-    public static HttpCheckResult CheckUrlStatusNonAsync(string url)
+    public static HttpCheckResult CheckUrlStatusSync(string url)
     {
       return CheckUrlStatus(url).GetAwaiter().GetResult();
     }
   }
+
   /// <summary>
   /// Represents the result of an HTTP status check.
   /// </summary>

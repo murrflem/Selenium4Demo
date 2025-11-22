@@ -49,13 +49,23 @@ namespace S4Demo.Tests.Pages
           .Distinct()
           .ToList();
 
+      // Apply domain filtering BEFORE performing any HTTP checks
+      if (ConfigManager.HttpFilterByDomain)
+      {
+        string baseDomain = new Uri(ConfigManager.TestSiteUrl).Host.ToLowerInvariant();
+
+        validUrls = validUrls
+            .Where(url => new Uri(url).Host.ToLowerInvariant() == baseDomain)
+            .ToList();
+      }
+
       // STEP 3: Prepare a list to collect any failures found during link verification
       var failures = new List<string>();
 
       // STEP 4: Loop through each valid URL and check its HTTP status + response time
       foreach (string urlToCheck in validUrls)
       {
-        var result = HttpHelper.CheckUrlStatus(urlToCheck).GetAwaiter().GetResult();
+        var result = HttpHelper.CheckUrlStatusSync(urlToCheck);
 
         if (result.StatusCode != HttpStatusCode.OK)
         {
@@ -96,7 +106,7 @@ namespace S4Demo.Tests.Pages
       // 3. Loop through the clean list
       foreach (string urlToCheck in validImageUrls)
       {
-        var result = HttpHelper.CheckUrlStatus(urlToCheck).GetAwaiter().GetResult();
+        var result = HttpHelper.CheckUrlStatusSync(urlToCheck);
         result.StatusCode.ShouldBe(HttpStatusCode.OK);
       }
     }
