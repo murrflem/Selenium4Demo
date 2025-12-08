@@ -1,10 +1,12 @@
 ﻿using NUnit.Framework;
 using S4Demo.Framework.Helpers;
 using S4Demo.Framework.Setup;
+using S4Demo.Tests.Models;
 using S4Demo.Tests.PageObjects;
 using S4Demo.Tests.PageObjects.SearchComponent;
 using Shouldly;
 using System;
+using System.Linq;
 using System.Net;
 
 namespace S4Demo.Tests.Tests
@@ -34,8 +36,14 @@ namespace S4Demo.Tests.Tests
     [Test]
     public void SearchForFlightsTest()
     {
-      var departureCode = "YVR";
-      var arrivalCode = "YYZ";
+      // Load test data from the CSV file and pick the first row
+      //var testData = TestDataHelper.LoadCsv<FlightData>("TestData/FlightData.csv");
+      //var row = testData.First();
+
+      // Picks a random row from the CSV file
+      var row = TestDataHelper.LoadRandomCsvRow<FlightData>("TestData/FlightData.csv");
+      var departureCode = row.DepartureCode;
+      var arrivalCode = row.ArrivalCode;
 
       _flightSearchComponent.SearchForFlights(departureCode, arrivalCode);
       _searchResultsPage.SearchesDropdown.Displayed.ShouldBeTrue();
@@ -48,7 +56,6 @@ namespace S4Demo.Tests.Tests
       var responseTime = statusResult.ResponseTimeMs;
       statusResult.StatusCode.ShouldBe(HttpStatusCode.OK);
       statusResult.ResponseTimeMs.ShouldBeLessThanOrEqualTo(ConfigManager.MaxExpectedResponseTimeMs);
-
     }
   } 
 }
