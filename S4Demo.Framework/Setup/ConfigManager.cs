@@ -34,6 +34,16 @@ namespace S4Demo.Framework.Setup
 
     // Screenshots
     public static bool EnableScreenshots => bool.Parse(_config["Screenshots:EnableScreenshots"]);
+    public static int VisualComparisonTolerance
+    {
+      get
+      {
+        if (int.TryParse(_config["VisualComparison:PixelTolerance"], out int value))
+          return value;
+
+        return 10; // fallback default if missing or invalid
+      }
+    }
 
     // Framework Logging
     public static string LoggingMode => _config["FrameworkLogging:Mode"] ?? "AllTests";

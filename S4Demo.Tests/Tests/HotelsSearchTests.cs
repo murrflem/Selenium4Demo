@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using S4Demo.Framework.Helpers;
 using S4Demo.Tests.PageObjects;
 using S4Demo.Tests.PageObjects.SearchComponent;
 using Shouldly;
@@ -11,12 +12,14 @@ namespace S4Demo.Tests.Tests
   {
     private HotelSearchComponent _hotelSearchComponent;
     private SearchResultsPage _searchResultsPage;
+    private ScreenshotHelper _screenshotHelper;
 
     [SetUp]
     public void Init()
     {
       _hotelSearchComponent = new HotelSearchComponent(WebDriver);
       _searchResultsPage = new SearchResultsPage(WebDriver);
+      _screenshotHelper = new ScreenshotHelper(WebDriver);
     }
 
 
@@ -42,8 +45,16 @@ namespace S4Demo.Tests.Tests
       _hotelSearchComponent.SearchForDefaultPackage();
       var resultsReturned = _searchResultsPage.TravelInfoDisplayed();
       resultsReturned.ShouldNotBeEmpty();
+
+      // ================== Visual comparison of the results page ===================
+      // Uses global default tolerance from appsettings.json
+      _screenshotHelper.ComparePage("HotelSearchResults");
+      // Overrides global tolerance setting for this specific comparison
+      //_screenshotHelper.ComparePage("HotelSearchResults", tolerance: 10);
+      //============================================================================
+
       //resultsReturned.ShouldContain(destination);
-      
+
     }
   }
 }
