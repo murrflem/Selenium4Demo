@@ -36,12 +36,23 @@ namespace S4Demo.Tests.Tests
     [Test]
     public void SearchForFlightsTest()
     {
-      // Load test data from the CSV file and pick the first row
+      // ================ LOAD TEST DATA FROM CSV FILE ==============================
+      //Pick the first row
       //var testData = TestDataHelper.LoadCsv<FlightData>("TestData/FlightData.csv");
       //var row = testData.First();
 
-      // Picks a random row from the CSV file
-      var row = TestDataHelper.LoadRandomCsvRow<FlightData>("TestData/FlightData.csv");
+      //Pick a random row from the CSV file
+      //var row = TestDataHelper.LoadRandomCsvRow<FlightData>("TestData/FlightData.csv");
+      // ==============================================================================
+
+      // ================ LOAD TEST DATA FROM EXCEL FILE ==============================
+      // Pick a random row 
+      var row = TestDataHelper.LoadRandomExcelRow<FlightData>("TestData/FlightData.xlsx", "FlightData");
+      
+      //Pick a specific row (e.g., 1st row)
+      //var row = TestDataHelper.LoadExcel<FlightData>("TestData/FlightData.xlsx","FlightData").First();
+      // ==============================================================================
+
       var departureCode = row.DepartureCode;
       var arrivalCode = row.ArrivalCode;
 
