@@ -9,6 +9,9 @@ namespace S4Demo.Framework.Setup
   {
     public string BaseUrl = "";
     public string CurrentBrowser = "";
+
+    // Folders
+    public static string BaseFolder { get; private set; }
     public static string ScreenshotsMainFolder = "";
     public static string ExceptionScreenshotsFolder = "";
     public static string PageScreenshotsFolder = "";
@@ -26,7 +29,7 @@ namespace S4Demo.Framework.Setup
         CurrentBrowser = browserUnderTest;
         return webDriver;
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         FrameworkLogger.LogError(ex.Message);
       }
@@ -39,7 +42,7 @@ namespace S4Demo.Framework.Setup
       {
         browser.Quit();
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         FrameworkLogger.LogError(ex.Message);
       }
@@ -59,9 +62,11 @@ namespace S4Demo.Framework.Setup
 
     private void CreateScreenshotFolders()
     {
-      ScreenshotsMainFolder = AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Screenshots\";
-      ExceptionScreenshotsFolder = ScreenshotsMainFolder + "\\ErrorScreenshots";
-      PageScreenshotsFolder = ScreenshotsMainFolder + "\\PageScreenshots";
+      // Base folder for all screenshots
+      BaseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\Screenshots");
+      ScreenshotsMainFolder = BaseFolder; // legacy
+      ExceptionScreenshotsFolder = Path.Combine(ScreenshotsMainFolder, "ErrorScreenshots");
+      PageScreenshotsFolder = Path.Combine(ScreenshotsMainFolder, "PageScreenshots");
 
       try
       {
@@ -69,7 +74,7 @@ namespace S4Demo.Framework.Setup
         Directory.CreateDirectory(ExceptionScreenshotsFolder);
         Directory.CreateDirectory(PageScreenshotsFolder);
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         FrameworkLogger.LogError(ex.Message);
       }
