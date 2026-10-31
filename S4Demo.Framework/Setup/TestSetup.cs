@@ -38,6 +38,11 @@ namespace S4Demo.Framework.Setup
 
     public void QuitDriver(IWebDriver browser)
     {
+      if (browser == null)
+      {
+        return;
+      }
+
       try
       {
         browser.Quit();

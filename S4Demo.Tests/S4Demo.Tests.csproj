@@ -8,6 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestDataModels\**" />
+    <Compile Remove="TestData\**" />
+    <EmbeddedResource Remove="TestDataModels\**" />
+    <EmbeddedResource Remove="TestData\**" />
+    <None Remove="TestDataModels\**" />
+    <None Remove="TestData\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.10" />
@@ -42,8 +51,6 @@
     <Folder Include="Screenshots\BaselineImages\" />
     <Folder Include="Screenshots\ErrorScreenshots\" />
     <Folder Include="Screenshots\ImageDiffs\" />
-    <Folder Include="TestDataModels\" />
-    <Folder Include="TestData\" />
   </ItemGroup>
 
 </Project>

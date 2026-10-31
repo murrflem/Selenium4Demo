@@ -3,7 +3,8 @@ using S4Demo.Tests.PageObjects;
 
 namespace S4Demo.Tests.Tests
 {
-  [TestFixture, Parallelizable]
+  [TestFixture]
+  [Parallelizable(ParallelScope.All)]
   public class CheckHomePageForBrokenLinks : BaseTest
   {
     private HomePage _homePage;

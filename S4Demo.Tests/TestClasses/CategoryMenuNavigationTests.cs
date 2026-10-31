@@ -5,7 +5,8 @@ using Shouldly;
 
 namespace S4Demo.Tests.TestClasses
 {
-  [TestFixture, Parallelizable]
+  [TestFixture]
+  [Parallelizable(ParallelScope.Self)]
   public class CategoryMenuNavigationTests : BaseTest
   {
     private CategoryMenu _categoryMenu;
