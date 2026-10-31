@@ -36,12 +36,14 @@
     <None Update="msedgedriver.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\FlightData.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\FlightData.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Screenshots\BaselineImages\" />
+    <Folder Include="Screenshots\ErrorScreenshots\" />
+    <Folder Include="Screenshots\ImageDiffs\" />
+    <Folder Include="TestDataModels\" />
+    <Folder Include="TestData\" />
   </ItemGroup>
 
 </Project>
