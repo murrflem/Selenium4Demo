@@ -6,7 +6,7 @@ S4Demo is a C# Selenium 4 automation framework designed to **simplify automated 
 
 ## 🚀 Getting Started
 
-1. Clone the repository and open it in **Visual Studio 2022**.
+1. Clone the repository and open it in **Visual Studio**.
 2. Restore NuGet packages.
 3. Configure `appsettings.json` (see below for details).
 4. Run your tests either **locally** or on **Selenium Grid**.

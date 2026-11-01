@@ -9,11 +9,8 @@
 
   <ItemGroup>
     <Compile Remove="TestDataModels\**" />
-    <Compile Remove="TestData\**" />
     <EmbeddedResource Remove="TestDataModels\**" />
-    <EmbeddedResource Remove="TestData\**" />
     <None Remove="TestDataModels\**" />
-    <None Remove="TestData\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +40,9 @@
 
   <ItemGroup>
     <None Update="msedgedriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\SearchData.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
+using OpenQA.Selenium.Support.UI;
 using S4Demo.Tests.PageObjects;
-using S4Demo.Tests.Tests;
 using Shouldly;
+using System;
 
 namespace S4Demo.Tests.TestClasses
 {
@@ -31,6 +32,11 @@ namespace S4Demo.Tests.TestClasses
       _categoryMenu.IsDisplayed().ShouldBeTrue();
 
       _categoryMenu.SelectCategory(categoryName);
+
+      var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(10));
+
+      wait.Until(driver =>
+          driver.Title.Contains(expectedTitle, StringComparison.OrdinalIgnoreCase));
 
       WebDriver.Title.ShouldContain(expectedTitle);
     }

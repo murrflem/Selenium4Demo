@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 using S4Demo.Tests.PageObjects;
 
-namespace S4Demo.Tests.Tests
+namespace S4Demo.Tests.TestClasses
 {
   [TestFixture]
-  [Parallelizable(ParallelScope.All)]
-  public class CheckHomePageForBrokenLinks : BaseTest
+  [Parallelizable(ParallelScope.Self)]
+  public class BrokenLinksTest : BaseTest
   {
     private HomePage _homePage;
 
@@ -16,7 +16,7 @@ namespace S4Demo.Tests.Tests
     }
 
     [Test]
-    public void CheckForBrokenLinks()
+    public void CheckForBrokenLinksOnHomePage()
     {
       _homePage.VerifyPageLinks(); // Check all links on the current page
     }
