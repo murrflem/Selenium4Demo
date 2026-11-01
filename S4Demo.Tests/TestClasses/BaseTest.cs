@@ -7,7 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Net.Http;
 
-namespace S4Demo.Tests.Tests
+namespace S4Demo.Tests.TestClasses
 {
   public class BaseTest : FrameworkBaseTest
   {
