@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Remote;
 using S4Demo.Framework.Helpers;
@@ -59,13 +60,23 @@ namespace S4Demo.Framework.Setup
 
         case "edge":
           var edgeLocal = new EdgeOptions();
+          DisableSavePrompts(edgeLocal);
           return new EdgeDriver(edgeLocal);
 
         default:
           var chromeLocal = new ChromeOptions();
           chromeLocal.AddArgument("--disable-notifications");
+          DisableSavePrompts(chromeLocal);
           return new ChromeDriver(chromeLocal);
       }
+    }
+
+    private static void DisableSavePrompts(ChromiumOptions options)
+    {
+      options.AddUserProfilePreference("autofill.profile_enabled", false);
+      options.AddUserProfilePreference("autofill.credit_card_enabled", false);
+      options.AddUserProfilePreference("credentials_enable_service", false);
+      options.AddUserProfilePreference("profile.password_manager_enabled", false);
     }
   }
 }
