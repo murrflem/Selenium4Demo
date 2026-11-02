@@ -40,11 +40,13 @@ namespace S4Demo.Framework.Setup
 
         case "edge":
           var edgeOptionsGrid = new EdgeOptions();
+          DisableSavePrompts(edgeOptionsGrid);
           return new RemoteWebDriver(gridUri, edgeOptionsGrid.ToCapabilities(), TimeSpan.FromSeconds(120));
 
         default:
           var chromeOptionsDefault = new ChromeOptions();
           chromeOptionsDefault.AddArgument("--disable-notifications");
+          DisableSavePrompts(chromeOptionsDefault);
           return new RemoteWebDriver(gridUri, chromeOptionsDefault.ToCapabilities(), TimeSpan.FromSeconds(120));
       }
     }
