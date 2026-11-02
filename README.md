@@ -1,6 +1,6 @@
 # S4Demo Selenium Automation Framework
 
-S4Demo is a C# Selenium 4 automation framework designed to **simplify automated UI testing** while remaining maintainable, readable, and extensible. It supports both **local execution** and **remote execution via Selenium Grid**, includes **helpers for common tasks**, and optionally supports **lightweight visual testing**.
+S4Demo is a C# Selenium 4 automation framework designed to **simplify automated UI testing** while remaining maintainable, readable, and extensible. It supports both **local execution** and **remote execution via Selenium Grid**, includes **helpers for common tasks**.
 
 ---
 
@@ -167,7 +167,7 @@ Visual comparisons are **optional**.
 
 S4Demo supports using external test data from **CSV** or **Excel** files to drive your tests with different input values.
 
-- Place your test data files in the `TestData` folder at the root of the project (e.g., `TestData/FlightData.xlsx` or `TestData/FlightData.csv`).  
+- Place your test data files in the `TestData` folder at the root of the project.  
 - Each file should have headers that match the property names of your data model class.  
 - The framework will load the data into typed objects, which can then be used directly in your tests.  
 
