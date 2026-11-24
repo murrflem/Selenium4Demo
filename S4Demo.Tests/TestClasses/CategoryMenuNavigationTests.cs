@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium.Support.UI;
+using S4Demo.Framework.Helpers;
 using S4Demo.Tests.PageObjects;
 using Shouldly;
 using System;
@@ -11,11 +12,14 @@ namespace S4Demo.Tests.TestClasses
   public class CategoryMenuNavigationTests : BaseTest
   {
     private CategoryMenu _categoryMenu;
+    private ScreenshotHelper _screenshotHelper;
 
     [SetUp]
     public void Init()
     {
       _categoryMenu = new CategoryMenu(WebDriver);
+      _screenshotHelper = new ScreenshotHelper(WebDriver);
+        
     }
 
     [TestCase("Apparel & Accessories", "Apparel")]
@@ -39,6 +43,13 @@ namespace S4Demo.Tests.TestClasses
           driver.Title.Contains(expectedTitle, StringComparison.OrdinalIgnoreCase));
 
       WebDriver.Title.ShouldContain(expectedTitle);
+
+      //Take Screenshot of the Page
+      _screenshotHelper.ScreenshotPage($"CategoryMenuNavigation_{categoryName}");
+
+      //Take Screenshot and Compare with Baseline
+      //_screenshotHelper.ComparePage($"CategoryMenuNavigation_{categoryName}");
+
     }
   }
 }
